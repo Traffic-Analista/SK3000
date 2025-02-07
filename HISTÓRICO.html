@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK3000 – Histórico de Consumo</title>
+<style>
+/* Define o estilo geral do corpo da página */
+body {
+    font-family: Arial, sans-serif; /* Define a fonte do texto */
+    margin: 0; /* Remove as margens externas */
+    padding: 0; /* Remove os espaçamentos internos */
+    display: flex; /* Usa o modelo de layout flexível */
+    overflow: hidden; /* Esconde a rolagem da página */
+}
+
+/* Estiliza a barra lateral de navegação */
+nav {
+    background-color: #5a7184; /* Define a cor de fundo */
+    color: white; /* Define a cor do texto */
+    width: 200px; /* Define a largura da barra */
+    padding: 20px; /* Adiciona espaço interno */
+    height: 100vh; /* Faz a barra ocupar toda a altura da tela */
+}
+
+/* Estiliza o título principal da página */
+h1 {
+    text-align: center; /* Centraliza o texto */
+    color: #5a7184; /* Define a cor do texto */
+}
+
+/* Estiliza os títulos dentro da barra lateral */
+nav h2 {
+    margin: 0 0 20px; /* Define espaçamento abaixo do título */
+}
+
+/* Estiliza os botões dentro da barra lateral */
+nav button {
+    width: 100%; /* Faz os botões ocuparem toda a largura */
+    padding: 10px; /* Adiciona espaçamento interno */
+    margin-bottom: 10px; /* Adiciona espaço entre os botões */
+    border: none; /* Remove a borda */
+    background-color: #6a849a; /* Define a cor de fundo */
+    color: white; /* Define a cor do texto */
+    cursor: pointer; /* Faz o cursor virar uma mãozinha ao passar */
+    font-size: 16px; /* Define o tamanho do texto */
+    text-align: left; /* Alinha o texto à esquerda */
+}
+
+/* Altera a cor do botão quando o mouse passa por cima */
+nav button:hover {
+    background-color: #7a95ad;
+}
+
+/* Define o estilo da área principal da página */
+main {
+    flex-grow: 1; /* Faz a área principal ocupar o espaço disponível */
+    padding: 20px; /* Adiciona espaço interno */
+}
+
+/* Estiliza a seção do formulário */
+.form-section {
+    display: flex; /* Organiza os elementos em coluna */
+    flex-direction: column;
+    gap: 10px; /* Adiciona espaço entre os elementos */
+    margin-bottom: 20px; /* Adiciona espaçamento abaixo da seção */
+}
+
+/* Define uma linha dentro do formulário */
+.form-row {
+    display: flex; /* Organiza os elementos lado a lado */
+    gap: 2px; /* Adiciona um pequeno espaço entre os elementos */
+}
+
+/* Estiliza os campos de entrada de texto */
+.form-row input {
+    padding: 10px; /* Adiciona espaçamento interno */
+    font-size: 14px; /* Define o tamanho da fonte */
+    border: 1px solid #ccc; /* Adiciona uma borda cinza */
+    border-radius: 5px; /* Arredonda os cantos */
+    flex: 1; /* Faz o campo ocupar o espaço disponível */
+    height: 18px; /* Define a altura do campo */
+}
+
+/* Estiliza os menus suspensos (select) */
+.form-row select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1; /* Faz o campo expandir dentro do espaço disponível */
+}
+
+/* Estiliza os rótulos dos filtros */
+.filter-section label {
+    width: 100%; /* Faz o rótulo ocupar toda a largura */
+    font-size: 14px; /* Define o tamanho do texto */
+    font-weight: bold; /* Deixa o texto em negrito */
+    margin: 1px; /* Adiciona um pequeno espaçamento */
+}
+
+/* Define a área que contém a tabela */
+.table-container {
+    /* min-height: 600px; (Define uma altura mínima para a tabela) */
+    max-height: 600px; /* Define uma altura máxima para a tabela */
+    overflow-y: auto; /* Adiciona uma barra de rolagem vertical se necessário */
+    border: 1px solid #ccc; /* Adiciona uma borda cinza ao redor */
+}
+
+/* Estiliza a tabela */
+table {
+    width: 100%; /* Faz a tabela ocupar toda a largura disponível */
+    border-collapse: collapse; /* Remove espaços entre as bordas das células */
+}
+
+/* Estiliza o cabeçalho da tabela */
+thead {
+    position: sticky; /* Fixa o cabeçalho no topo ao rolar a tabela */
+    top: 0;
+    background-color: #5a7184; /* Define a cor de fundo */
+    color: white; /* Define a cor do texto */
+    z-index: 10; /* Garante que o cabeçalho fique acima dos outros elementos */
+}
+
+/* Estiliza as células da tabela */
+table th, table td {
+    border: 1px solid #ccc; /* Adiciona bordas às células */
+    padding: 10px; /* Adiciona espaço interno */
+    text-align: center; /* Centraliza o texto */
+    font-size: 13px; /* Define o tamanho do texto */
+}
+
+/* Estiliza as células do cabeçalho */
+table th {
+    background-color: #5a7184; /* Define a cor de fundo */
+    color: white; /* Define a cor do texto */
+    padding: 7px; /* Adiciona espaçamento interno */
+}
+
+/* Estiliza a área onde aparece o total */
+.total-container {
+    margin-top: 10px; /* Adiciona espaçamento acima */
+    font-size: 16px; /* Define o tamanho do texto */
+    font-weight: bold; /* Deixa o texto em negrito */
+    text-align: right; /* Alinha o texto à direita */
+    padding: 10px; /* Adiciona espaço interno */
+    background-color: #f2f2f2; /* Define um fundo cinza claro */
+    border: 1px solid #ccc; /* Adiciona uma borda */
+}
+
+</style>
+
+<script>
+    const apiKey = 'AIzaSyBwrglRLr-0Bj5c4kwc-c8QVeWYTqQMco0';
+    const sheetId = '1ik7FzWqoqiA6VUtU_-U2uoOJiEJm4gJlfqbuvpinVbw';
+
+    async function carregarDados() {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/CONSUMO?key=${apiKey}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        preencherTabela(data.values);
+    }
+
+    function preencherTabela(dados) {
+        const tbody = document.getElementById('tabelaDados');
+        tbody.innerHTML = '';
+        dados.slice(1).forEach(linha => {
+            let tr = document.createElement('tr');
+            linha.forEach(celula => {
+                let td = document.createElement('td');
+                td.textContent = celula;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        calcularTotal();
+    }
+
+    async function carregarFiltros() {
+        const filtros = {
+            'Responsavel': 'USUARIOS!A:A',
+            'caminhao': 'CAMINHAO!A:A',
+            'obra': 'OBRA!A:A',
+            'tipo': 'TIPO!A:A',
+            'codigo_hog': 'INICIAL!B:B',
+            'busca': 'INICIAL!A:A'
+        };
+        for (let filtro in filtros) {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${filtros[filtro]}?key=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            preencherFiltro(filtro, data.values);
+        }
+    }
+
+    function preencherFiltro(id, valores) {
+        const select = document.getElementById(id);
+        select.innerHTML = '<option value="">Todos</option>';
+        valores.slice(1).forEach(valor => {
+            let option = document.createElement('option');
+            option.value = valor[0];
+            option.textContent = valor[0];
+            select.appendChild(option);
+        });
+    }
+
+    function filtrarTabela() {
+        const filtros = {
+            responsavel: document.getElementById('Responsavel').value.toLowerCase(),
+            caminhao: document.getElementById('caminhao').value.toLowerCase(),
+            obra: document.getElementById('obra').value.toLowerCase(),
+            tipo: document.getElementById('tipo').value.toLowerCase(),
+            codigo_hog: document.getElementById('codigo_hog').value.toLowerCase(),
+            busca: document.getElementById('busca').value.toLowerCase(),
+            dataInicial: document.getElementById('dataInicial').value,
+            dataFinal: document.getElementById('dataFinal').value
+        };
+
+        document.querySelectorAll('#tabelaDados tr').forEach(linha => {
+            let colunas = linha.getElementsByTagName('td');
+            let mostrar = true;
+
+            if (filtros.responsavel && !colunas[0].textContent.toLowerCase().includes(filtros.responsavel)) mostrar = false;
+            if (filtros.caminhao && !colunas[1].textContent.toLowerCase().includes(filtros.caminhao)) mostrar = false;
+            if (filtros.obra && !colunas[2].textContent.toLowerCase().includes(filtros.obra)) mostrar = false;
+            if (filtros.tipo && !colunas[3].textContent.toLowerCase().includes(filtros.tipo)) mostrar = false;
+            if (filtros.codigo_hog && !colunas[4].textContent.toLowerCase().includes(filtros.codigo_hog)) mostrar = false;
+            if (filtros.busca && !colunas[5].textContent.toLowerCase().includes(filtros.busca)) mostrar = false;
+
+            const data = colunas[7].textContent;
+            const dataParts = data.split('/');
+            const dataFormatada = `${dataParts[2]}-${dataParts[1]}-${dataParts[0]}`;
+
+            if (filtros.dataInicial && new Date(dataFormatada) < new Date(filtros.dataInicial)) mostrar = false;
+            if (filtros.dataFinal && new Date(dataFormatada) > new Date(filtros.dataFinal)) mostrar = false;
+
+            linha.style.display = mostrar ? '' : 'none';
+        });
+
+        calcularTotal();
+    }
+
+    function calcularTotal() {
+        let total = 0;
+        document.querySelectorAll('#tabelaDados tr').forEach(linha => {
+            if (linha.style.display !== 'none') {
+                let quantidade = linha.cells[6]?.textContent;
+                total += quantidade ? parseFloat(quantidade) || 0 : 0;
+            }
+        });
+        document.getElementById('totalQuantidade').textContent = `Total: ${total}`;
+    }
+
+    window.onload = function() {
+        carregarDados();
+        carregarFiltros();
+    };
+</script>
+</head>
+<body>
+<body>
+    <nav>
+    <h2>_______________</h2>
+    <h2>Menu</h2>
+    <button onclick="window.location.href='Index.html'">ESTOQUE SK</button>
+    <button onclick="window.location.href='HISTÓRICO.html'">HISTÓRICO</button>
+    <h2>_______________</h2>
+    <h2>Informações</h2>
+    <button onclick="window.location.href='SK01.html'">SK01 SEL-3C40</button>
+    <button onclick="window.location.href='SK02.html'">SK02 BDC-4B28</button>
+    <button onclick="window.location.href='SK03.html'">SK03 TAO-1A51</button>
+
+</nav>
+    <main>
+        <h1>Histórico de Consumo</h1>
+        <div class="filter-section label">
+        <div class="form-section">
+            <div class="form-row">
+
+            <div>
+                <label for="Responsavel">Responsável</label>
+                <select id="Responsavel" onchange="filtrarTabela()"></select>
+            </div>
+            <div>
+                <label for="caminhao">Caminhão</label>
+                <select id="caminhao" onchange="filtrarTabela()"></select>
+            </div>
+            <div>
+                <label for="obra">Obra</label>
+                <select id="obra" onchange="filtrarTabela()"></select>
+            </div>
+            <div>
+                <label for="tipo">Tipo</label>
+                <select id="tipo" onchange="filtrarTabela()"></select>
+            </div>
+            <div>
+                <label for="codigo_hog">Código HOG</label>
+                <select id="codigo_hog" onchange="filtrarTabela()"></select>
+            </div>
+            <div>
+                <label for="busca">Descrição</label>
+                <input type="text" id="busca" placeholder="Descrição..." oninput="filtrarTabela()" />
+            </div>
+            <div>
+                <label for="dataInicial">Data Inicial</label>
+                <input type="date" id="dataInicial" onchange="filtrarTabela()"/>
+            </div>
+            <div>
+                <label for="dataFinal">Data Final</label>
+                <input type="date" id="dataFinal" onchange="filtrarTabela()"/>
+            </div>
+        </div>
+    <div class="table-container">
+        <table id="tabela-consumo">
+            <thead>
+                <tr>
+                    <th>Responsável</th>
+                    <th>Caminhão</th>
+                    <th>Obra</th>
+                    <th>Tipo</th>
+                    <th>Código Hog</th>
+                    <th>Descrição</th>
+                    <th>Quantidade</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaDados"></tbody>
+        </table>
+    </div>
+    <div id="totalQuantidade" class="total-container">Total: 0</div>
+</main>
+</body>
+</html>

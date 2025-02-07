@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK3000 – Estoque de Peças</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif; /* Define a fonte do corpo do documento */
+        margin: 0; /* Remove a margem padrão */
+        padding: 0; /* Remove o preenchimento padrão */
+        display: flex; /* Usa o modelo de layout flexível */
+        overflow: hidden; /* Impede a rolagem da página */
+    }
+
+    nav {
+        background-color: #5a7184; /* Define a cor de fundo da barra de navegação */
+        color: white; /* Define a cor do texto como branco */
+        width: 200px; /* Define a largura da barra de navegação */
+        padding: 20px; /* Adiciona um preenchimento interno */
+        height: 100vh; /* Define a altura como 100% da altura da tela */
+    }
+
+    nav h2 {
+        margin: 0 0 20px; /* Remove a margem superior e adiciona espaçamento inferior */
+    }
+
+    nav button {
+        width: 100%; /* Faz os botões ocuparem toda a largura do elemento pai */
+        padding: 10px; /* Adiciona espaçamento interno */
+        margin-bottom: 10px; /* Adiciona espaçamento entre os botões */
+        border: none; /* Remove a borda dos botões */
+        background-color: #6a849a; /* Define a cor de fundo dos botões */
+        color: white; /* Define a cor do texto como branco */
+        cursor: pointer; /* Muda o cursor para indicar que o botão é clicável */
+        font-size: 16px; /* Define o tamanho da fonte */
+        text-align: left; /* Alinha o texto à esquerda */
+    }
+
+    nav button:hover {
+        background-color: #7a95ad; /* Altera a cor de fundo ao passar o mouse */
+    }
+
+    main {
+        flex-grow: 1; /* Faz com que o elemento ocupe todo o espaço disponível */
+        padding: 20px; /* Adiciona espaçamento interno */
+        display: flex; /* Usa o modelo de layout flexível */
+        flex-direction: column; /* Organiza os elementos em coluna */
+    }
+
+    h1 {
+        text-align: center; /* Centraliza o título */
+        color: #5a7184; /* Define a cor do texto */
+    }
+
+    .filter-section {
+        display: flex; /* Usa o modelo de layout flexível */
+        gap: 10px; /* Define um espaçamento entre os elementos */
+        margin-bottom: 20px; /* Adiciona um espaçamento abaixo da seção */
+
+    }
+
+    .filter-section select {
+        padding: 10px; /* Adiciona espaçamento interno */
+        font-size: 14px; /* Define o tamanho da fonte */
+        border: 1px solid #ccc; /* Adiciona uma borda com cor cinza clara */
+        border-radius: 5px; /* Arredonda as bordas */
+        height: 43px; /* Define a altura dos elementos */
+    }
+
+    .filter-section input {
+        padding: 10px; /* Adiciona espaçamento interno */
+        font-size: 14px; /* Define o tamanho da fonte */
+        border: 1px solid #ccc; /* Adiciona uma borda com cor cinza clara */
+        border-radius: 5px; /* Arredonda as bordas */
+        height: 20px; /* Define a altura dos elementos */
+    }
+
+
+.table-container {
+    overflow-y: auto; /* Adiciona rolagem vertical caso necessário */
+    max-height: 70vh; /* Define uma altura máxima relativa à altura da tela */
+}
+
+table {
+    width: 100%;  /* Faz a tabela ocupar toda a largura disponível */
+    border-collapse: collapse; /* Remove os espaços entre as bordas das células */
+    table-layout: fixed; /* Mantém a largura fixa das colunas */
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #5a7184; /* Mantém o fundo do cabeçalho fixo */
+    color: white;
+    z-index: 10; /* Garante que o cabeçalho fique sobre as outras linhas */
+}
+
+/* Define a largura fixa das colunas */
+table th {
+    border: 1px solid #ccc; /* Adiciona uma borda cinza clara */
+    text-align: center; /* Centraliza o texto */
+    font-size: 13px; /* Define o tamanho da fonte */
+    padding: 7px; /* Altura da célula do cabeçalho */
+    overflow: hidden; /* Esconde o conteúdo que ultrapassar o tamanho da célula */
+    white-space: nowrap; /* Evita quebra de linha */
+}
+
+table td {
+    border: 1px solid #ccc; /* Adiciona uma borda cinza clara */
+    text-align: center; /* Centraliza o texto */
+    font-size: 13px; /* Define o tamanho da fonte */
+    padding: 10px; /* Altura da célula do cabeçalho */
+    overflow: hidden; /* Esconde o conteúdo que ultrapassar o tamanho da célula */
+}
+
+/* Define a largura da primeira célula */
+table th:nth-child(1),
+table td:nth-child(1) {
+    width: 50px; 
+    min-width: 50px;
+}
+
+/* Define a largura da segunda célula DESCRIÇÃO*/
+table th:nth-child(2),
+table td:nth-child(2) {
+    width: 180px;
+    min-width: 180px;
+}
+
+/* Define a largura da TERCEIRA célula CODIGO*/
+table th:nth-child(3),
+table td:nth-child(3) {
+    width: 90px;
+    min-width: 90px;
+}
+
+/* Define a largura da QUARTA célula DOLAR*/
+table th:nth-child(4),
+table td:nth-child(4) {
+    width: 40px;
+    min-width: 40px;
+}
+
+/* Define a largura da QUINTA célula REAL*/
+table th:nth-child(5),
+table td:nth-child(5) {
+    width: 40px;
+    min-width: 40px;
+}
+
+
+/* Define a largura das células de 4 a 11 */
+table th:nth-child(n+6),
+table td:nth-child(n+6) {
+    width: 30px;
+    min-width: 30px;
+}
+
+/* Define a largura fixa para as células que contêm fotos */
+.photo-cell {
+    width: 100px;
+    min-width: 100px;
+}
+        /* Aplicando cores específicas às colunas */
+        table td:nth-child(6) { background-color: #FFFFAF; color: black; }
+        table td:nth-child(7) { background-color: #009E47; color: white; }
+        table td:nth-child(8) { background-color: #44546A; color: white; }
+        table td:nth-child(9) { background-color: #FFC000; color: black; }
+
+        /* Seus estilos existentes */
+        .print-button {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .print-button:hover {
+            background-color: #45a049;
+        }
+        .print-button, .export-button {
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+
+        }
+        .print-button:hover, .export-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h2>_______________</h2>
+        <h2>Menu</h2>
+        <button onclick="window.location.href='Index.html'">ESTOQUE SK</button>
+        <button onclick="window.location.href='HISTÓRICO.html'">HISTÓRICO</button>
+        <h2>_______________</h2>
+        <h2>Informações</h2>
+        <button onclick="window.location.href='SK01.html'">SK01 SEL-3C40</button>
+        <button onclick="window.location.href='SK02.html'">SK02 BDC-4B28</button>
+        <button onclick="window.location.href='SK03.html'">SK03 TAO-1A51</button>
+    </nav>
+    <main>
+        <h1>SK3000 – Estoque de Peças</h1>
+        <div class="filter-section">
+            <input type="text" id="busca" placeholder="Buscar por texto... " oninput="filtrarTabela()" />
+            <input type="text" id="codigoHog" placeholder="Código HOG" oninput="filtrarTabela()" />
+            <select id="caixa" onchange="filtrarTabela()">
+                <option value="caixa">Caixa</option>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+            </select>
+            <select id="status" onchange="filtrarTabela()">
+                <option value="status">Status</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+            </select>
+            <button class="print-button" onclick="imprimirTabela()">Imprimir Tabela</button>
+            <button class="export-button" onclick="exportarParaExcel()">Exportar p/ Excel</button>
+        </div>
+        <div class="table-container">
+            <table id="tabela-estoque">
+                <thead>
+                    <tr>
+                        <th class="photo-cell">Foto</th>
+                        <th>Descrição</th>
+                        <th>Código HOG</th>
+                        <th>Dólar</th>
+                        <th>Real</th>
+                        <th>Empresa</th>
+                        <th>SK1</th>
+                        <th>SK2</th>
+                        <th>SK3</th>
+                        <th>Caixa</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-body"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const apiKey = "AIzaSyBwrglRLr-0Bj5c4kwc-c8QVeWYTqQMco0";
+        const sheetId = "1ik7FzWqoqiA6VUtU_-U2uoOJiEJm4gJlfqbuvpinVbw";
+        const range = "INICIAL!A:K";
+
+        function carregarDados() {
+            const script = document.createElement("script");
+            script.src = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}&callback=processarDados`;
+            document.body.appendChild(script);
+        }
+
+        function processarDados(data) {
+            const tabelaBody = document.getElementById("tabela-body");
+            tabelaBody.innerHTML = "";
+
+            data.values.slice(1).forEach(linha => {
+                const tr = document.createElement("tr");
+
+                const tdFoto = document.createElement("td");
+                tdFoto.classList.add("photo-cell");
+
+                if (linha[10]) {
+                    const img = document.createElement("img");
+                    img.src = linha[10];
+                    img.alt = "Imagem";
+                    img.style.width = "100%";
+                    img.style.height = "100%";
+                    img.style.objectFit = "cover";
+                    tdFoto.style.width = "100px";
+                    tdFoto.style.height = "100px";
+                    tdFoto.appendChild(img);
+                }
+
+                tr.appendChild(tdFoto);
+
+                linha.forEach((coluna, index) => {
+                    if (index < 10) {
+                        const td = document.createElement("td");
+                        if (index === 9) td.setAttribute("data-status", coluna.toLowerCase());
+                        td.textContent = coluna;
+                        tr.appendChild(td);
+                    }
+                });
+
+                tabelaBody.appendChild(tr);
+            });
+        }
+
+        function filtrarTabela() {
+            const busca = document.getElementById('busca').value.toLowerCase();
+            const codigoHog = document.getElementById('codigoHog').value.toLowerCase();
+            const caixaFiltro = document.getElementById('caixa').value;
+            const statusFiltro = document.getElementById('status').value.toLowerCase();
+            const linhas = document.querySelectorAll('tbody tr');
+            
+            linhas.forEach(linha => {
+                const descricao = linha.cells[1].textContent.toLowerCase();
+                const codigo = linha.cells[2].textContent.toLowerCase();
+                const caixa = parseInt(linha.cells[9].textContent) || 0;
+                const status = linha.cells[10].getAttribute('data-status');
+                
+                const buscaMatch = descricao.includes(busca) || codigo.includes(busca);
+                const codigoMatch = !codigoHog || codigo.includes(codigoHog);
+                const caixaMatch = caixaFiltro === "caixa" || (caixaFiltro === "Sim" && caixa > 0) || (caixaFiltro === "Não" && caixa === 0);
+                const statusMatch = statusFiltro === "status" || status === statusFiltro;
+                
+                linha.style.display = (buscaMatch && codigoMatch && caixaMatch && statusMatch) ? '' : 'none';
+            });
+        }
+
+        window.onload = carregarDados;
+
+        function imprimirTabela() {
+            const tabela = document.getElementById('tabela-estoque').outerHTML;
+            const estilo = document.head.innerHTML;
+            const janela = window.open('', '', 'width=800,height=600');
+            janela.document.write(`<!DOCTYPE html><html lang='pt-BR'><head>${estilo}</head><body>${tabela}</body></html>`);
+            janela.document.close();
+            janela.print();
+        }
+
+        function exportarParaExcel() {
+            const tabela = document.getElementById('tabela-estoque');
+            let tabelaHTML = "<table border='1'>";
+
+            // Cabeçalho
+            const headers = tabela.querySelectorAll("thead tr th");
+            tabelaHTML += "<tr>";
+            headers.forEach(th => {
+                tabelaHTML += `<th>${th.innerText}</th>`;
+            });
+            tabelaHTML += "</tr>";
+
+            // Linhas da tabela
+            const linhas = tabela.querySelectorAll("tbody tr");
+            linhas.forEach(tr => {
+                tabelaHTML += "<tr>";
+                tr.querySelectorAll("td").forEach(td => {
+                    tabelaHTML += `<td>${td.innerText}</td>`;
+                });
+                tabelaHTML += "</tr>";
+            });
+
+            tabelaHTML += "</table>";
+
+            const blob = new Blob(["\ufeff" + tabelaHTML], { type: "application/vnd.ms-excel;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Estoque_SK3000.xls";
+            link.click();
+        }
+    </script>
+</body>
+</html>
